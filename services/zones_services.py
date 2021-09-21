@@ -4,23 +4,24 @@ from services.user_service import UserService
 
 
 class ZoneServices:
-    zone_services = {}
+    zone_info = {}
 
     def add_zones(self, pincode):
-        zone_info = {"zoneType": "GREEN", "numCases": 0}
-        if pincode not in ZoneServices.zone_services:
-            cases_count = self.count_cases(pincode)
-            if cases_count > 0 and cases_count < 5:
-                zone_info["zoneType"] = "ORANGE"
-                zone_info["numCases"] = cases_count
-            elif cases_count > 5:
-                zone_info["zoneType"] = "RED"
-                zone_info["numCases"] = cases_count
-            ZoneServices.zone_services[pincode] = zone_info
-        else:
-            zone_data = ZoneService.zone_services.get(pincode)
-            zone_info["numCases"] = zone_data.get_numcases()
-            zone_info["zoneType"] = zone_data.get_zone_type()
+        zone_info = {}
+        zone_type = 'GREEN'
+        num_cases = 0
+        num_cases = self.count_cases(pincode)
+        if num_cases > 0 and num_cases <=5:
+            zone_type = "ORANGE"
+        elif num_cases > 5:
+            zone_type = "RED"
+        zone = Zones()
+        zone.set_numcases(num_cases)
+        zone.set_pincode(pincode)
+        zone.set_zone_type(zone_type)
+        ZoneServices.zone_info[pincode] = zone
+        zone_info["numCases"] = num_cases
+        zone_info["zoneType"] = zone_type
 
         return zone_info
 
@@ -35,3 +36,17 @@ class ZoneServices:
                 positive_cases += 1
 
         return positive_cases
+
+    def get_all_zone_info(self):
+        zone_info = []
+        for zone_key in ZoneServices.zone_info:
+            zone_obj = ZoneServices.zone_info[zone_key]
+            zone_pincode = zone_key
+            zone_numcases = zone_obj.get_numcases()
+            zone_type = zone_obj.get_zone_type()
+            zone = {}
+            zone["pinCode"] = zone_pincode
+            zone["numCases"] = zone_numcases
+            zone["zoneType"] = zone_type
+            zone_info.append(zone)
+        return {"zoneInfo": zone_info}

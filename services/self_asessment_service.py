@@ -29,3 +29,20 @@ class SelfAsessmentService:
             else:
                 return 95
         return 10
+
+    def get_self_asessment_reports(self):
+        asessment = []
+        for asessment_key in SelfAsessmentService.self_asessments:
+            self_asessment = SelfAsessmentService.self_asessments[asessment_key]
+            user_id = self_asessment.get_user_id()
+            symptoms = self_asessment.get_symptoms()
+            travel_history = self_asessment.get_travel_history()
+            contact_with_covid_patient = self_asessment.contact_with_covid_patient()
+
+            asessment_obj = {}
+            asessment_obj["userId"] = user_id
+            asessment_obj["symptoms"] = symptoms
+            asessment_obj["travel_history"] = travel_history
+            asessment_obj["contact_with_covid_patient"] = contact_with_covid_patient
+            asessment.append(asessment_obj)
+        return {"selfAsessmentReport": asessment}
